@@ -1,0 +1,173 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile representation for students and teachers/admins.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Auth UID" },
+        "role": { "type": "string", "enum": ["student", "admin"], "description": "Role of user" },
+        "name": { "type": "string", "description": "Student or Admin full name" },
+        "studentId": { "type": "string", "description": "Unique assigned Student ID" },
+        "studentClass": { "type": "string", "description": "Class or category like SSC, Railway, Sainik, Navodaya" },
+        "email": { "type": "string", "description": "User email address" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp via serverTimestamp()" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Update timestamp via serverTimestamp()" }
+      },
+      "required": ["userId", "role", "name", "studentId", "createdAt"]
+    },
+    "ExamTest": {
+      "title": "ExamTest",
+      "description": "Online examination or test metadata.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique test identifier" },
+        "title": { "type": "string", "description": "Test title in English" },
+        "titleHindi": { "type": "string", "description": "Test title in Hindi" },
+        "subject": { "type": "string", "description": "Subject e.g. Mathematics" },
+        "category": { "type": "string", "description": "Exam category e.g. Railway, SSC, Navodaya, Sainik School" },
+        "totalQuestions": { "type": "integer", "description": "Total number of questions" },
+        "durationMinutes": { "type": "integer", "description": "Time duration in minutes" },
+        "marksPerQuestion": { "type": "number", "description": "Positive marks per question e.g. 1.0 or 2.0" },
+        "negativeMarking": { "type": "number", "description": "Negative marks deduction per incorrect answer e.g. 0.25" },
+        "instructionsEn": { "type": "string", "description": "Instructions in English" },
+        "instructionsHi": { "type": "string", "description": "Instructions in Hindi" },
+        "allowRetakes": { "type": "boolean", "description": "Whether students can retake the test" },
+        "showExplanations": { "type": "boolean", "description": "Whether to reveal correct answers and explanations after submission" },
+        "isPublished": { "type": "boolean", "description": "Whether the test is active for students" },
+        "createdBy": { "type": "string", "description": "Admin UID who created the test" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp via serverTimestamp()" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Update timestamp via serverTimestamp()" }
+      },
+      "required": ["id", "title", "subject", "totalQuestions", "durationMinutes", "marksPerQuestion", "isPublished", "createdAt"]
+    },
+    "ExamQuestion": {
+      "title": "ExamQuestion",
+      "description": "Individual question in a test without exposing the answer key.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique question identifier" },
+        "testId": { "type": "string", "description": "Reference to parent test" },
+        "questionIndex": { "type": "integer", "description": "0-indexed question ordering" },
+        "questionEn": { "type": "string", "description": "Question statement in English" },
+        "questionHi": { "type": "string", "description": "Question statement in Hindi" },
+        "optionsEn": { "type": "array", "description": "4 options in English" },
+        "optionsHi": { "type": "array", "description": "4 options in Hindi" },
+        "marks": { "type": "number", "description": "Marks weight for this question" },
+        "imageUrl": { "type": "string", "description": "Optional image URL for geometry/diagram" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["id", "testId", "questionIndex", "questionEn", "optionsEn", "createdAt"]
+    },
+    "ExamAnswerKey": {
+      "title": "ExamAnswerKey",
+      "description": "Correct answers and explanations kept secure from students before submission.",
+      "type": "object",
+      "properties": {
+        "testId": { "type": "string", "description": "Associated test ID" },
+        "keys": { "type": "object", "description": "Map of questionId to correct option (A, B, C, D)" },
+        "explanationsEn": { "type": "object", "description": "Map of questionId to explanation in English" },
+        "explanationsHi": { "type": "object", "description": "Map of questionId to explanation in Hindi" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Update timestamp" }
+      },
+      "required": ["testId", "keys", "createdAt"]
+    },
+    "ExamAttempt": {
+      "title": "ExamAttempt",
+      "description": "Active or completed attempt session for a student.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Attempt session ID" },
+        "testId": { "type": "string", "description": "Associated test ID" },
+        "studentUid": { "type": "string", "description": "Student Auth UID" },
+        "studentName": { "type": "string", "description": "Student display name" },
+        "studentId": { "type": "string", "description": "Student roll/ID" },
+        "startedAt": { "type": "string", "format": "date-time", "description": "Attempt start time" },
+        "submittedAt": { "type": "string", "format": "date-time", "description": "Submission time" },
+        "status": { "type": "string", "enum": ["in_progress", "submitted"], "description": "Status of the exam" },
+        "answers": { "type": "object", "description": "Map of questionId to selected option (A, B, C, D)" },
+        "reviewFlags": { "type": "array", "description": "List of questionIds marked for review" },
+        "remainingSeconds": { "type": "integer", "description": "Saved timer seconds remaining" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Update timestamp" }
+      },
+      "required": ["id", "testId", "studentUid", "status", "createdAt"]
+    },
+    "ExamResult": {
+      "title": "ExamResult",
+      "description": "Final calculated score and result record for an exam attempt.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Result document ID" },
+        "testId": { "type": "string", "description": "Test ID" },
+        "testTitle": { "type": "string", "description": "Test title" },
+        "studentUid": { "type": "string", "description": "Student Auth UID" },
+        "studentName": { "type": "string", "description": "Student name" },
+        "studentId": { "type": "string", "description": "Student ID" },
+        "studentClass": { "type": "string", "description": "Student class or category" },
+        "totalQuestions": { "type": "integer", "description": "Total questions count" },
+        "correctAnswers": { "type": "integer", "description": "Count of correct answers" },
+        "incorrectAnswers": { "type": "integer", "description": "Count of incorrect answers" },
+        "unattempted": { "type": "integer", "description": "Count of unattempted questions" },
+        "totalMarks": { "type": "number", "description": "Final scored marks" },
+        "maxMarks": { "type": "number", "description": "Maximum obtainable marks" },
+        "percentage": { "type": "number", "description": "Percentage scored" },
+        "accuracy": { "type": "number", "description": "Accuracy percentage" },
+        "timeTakenSeconds": { "type": "integer", "description": "Time spent in seconds" },
+        "submittedAt": { "type": "string", "format": "date-time", "description": "Time of submission" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["id", "testId", "studentUid", "totalQuestions", "totalMarks", "submittedAt", "createdAt"]
+    },
+    "LeaderboardEntry": {
+      "title": "LeaderboardEntry",
+      "description": "Public ranking record for a student on a specific test.",
+      "type": "object",
+      "properties": {
+        "testId": { "type": "string", "description": "Test ID" },
+        "studentUid": { "type": "string", "description": "Student Auth UID" },
+        "studentName": { "type": "string", "description": "Student name" },
+        "studentId": { "type": "string", "description": "Student ID" },
+        "studentClass": { "type": "string", "description": "Student class" },
+        "score": { "type": "number", "description": "Final score" },
+        "percentage": { "type": "number", "description": "Percentage score" },
+        "accuracy": { "type": "number", "description": "Accuracy percentage" },
+        "timeTakenSeconds": { "type": "integer", "description": "Time spent in seconds" },
+        "rank": { "type": "integer", "description": "Calculated rank" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Timestamp" }
+      },
+      "required": ["testId", "studentUid", "studentName", "score", "timeTakenSeconds", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile documents keyed by Auth UID"
+    },
+    "/tests/{testId}": {
+      "schema": "ExamTest",
+      "description": "Online exam tests and mock papers created by the teacher/admin"
+    },
+    "/tests/{testId}/questions/{questionId}": {
+      "schema": "ExamQuestion",
+      "description": "Bilingual questions for an exam without exposed answers"
+    },
+    "/tests/{testId}/answerKeys/{keyId}": {
+      "schema": "ExamAnswerKey",
+      "description": "Correct answer keys and bilingual explanations"
+    },
+    "/attempts/{attemptId}": {
+      "schema": "ExamAttempt",
+      "description": "Student test attempt records and resume state"
+    },
+    "/results/{resultId}": {
+      "schema": "ExamResult",
+      "description": "Calculated student test results and score breakdown"
+    },
+    "/leaderboards/{testId}/entries/{studentUid}": {
+      "schema": "LeaderboardEntry",
+      "description": "Public leaderboard entries for ranking display"
+    }
+  }
+}

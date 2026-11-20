@@ -1,0 +1,6 @@
+{
+  "name": "Maths By Mithlesh Sir",
+  "description": "Online CBT Examination App for Railway, SSC, Navodaya & Sainik School Mathematics",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

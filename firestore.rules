@@ -1,0 +1,167 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net (default deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isTeacherAdmin() {
+      return isSignedIn() && (
+        (request.auth.token.email == "mithleshyadaw0@gmail.com" && request.auth.token.email_verified == true) ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidTimestamp(ts) {
+      return ts is timestamp && ts <= request.time;
+    }
+
+    // Validation for UserProfile
+    function isValidUserProfile(data) {
+      return data.userId is string && data.userId == request.auth.uid &&
+             data.role in ['student', 'admin'] &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.studentId is string && data.studentId.size() > 0 && data.studentId.size() <= 50 &&
+             (!('studentClass' in data) || (data.studentClass is string && data.studentClass.size() <= 100)) &&
+             (!('email' in data) || (data.email is string && data.email.size() <= 200)) &&
+             isValidTimestamp(data.createdAt) &&
+             (!('updatedAt' in data) || isValidTimestamp(data.updatedAt));
+    }
+
+    // Validation for ExamTest
+    function isValidExamTest(data) {
+      return data.id is string && data.id.size() > 0 &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 200 &&
+             (!('titleHindi' in data) || (data.titleHindi is string && data.titleHindi.size() <= 200)) &&
+             data.subject is string && data.subject.size() > 0 && data.subject.size() <= 100 &&
+             (!('category' in data) || (data.category is string && data.category.size() <= 100)) &&
+             data.totalQuestions is int && data.totalQuestions >= 0 &&
+             data.durationMinutes is int && data.durationMinutes > 0 &&
+             (data.marksPerQuestion is int || data.marksPerQuestion is float) &&
+             (data.negativeMarking is int || data.negativeMarking is float) &&
+             data.isPublished is bool &&
+             isValidTimestamp(data.createdAt);
+    }
+
+    // Validation for ExamQuestion
+    function isValidExamQuestion(data) {
+      return data.id is string && data.id.size() > 0 &&
+             data.testId is string && data.testId.size() > 0 &&
+             data.questionIndex is int && data.questionIndex >= 0 &&
+             data.questionEn is string && data.questionEn.size() > 0 &&
+             (!('questionHi' in data) || (data.questionHi is string)) &&
+             data.optionsEn is list && data.optionsEn.size() == 4 &&
+             (!('optionsHi' in data) || (data.optionsHi is list && data.optionsHi.size() == 4)) &&
+             isValidTimestamp(data.createdAt);
+    }
+
+    // Validation for ExamAttempt
+    function isValidExamAttempt(data) {
+      return data.id is string && data.id.size() > 0 &&
+             data.testId is string && data.testId.size() > 0 &&
+             data.studentUid is string && data.studentUid == request.auth.uid &&
+             data.status in ['in_progress', 'submitted'] &&
+             (!('answers' in data) || data.answers is map) &&
+             (!('reviewFlags' in data) || data.reviewFlags is list) &&
+             (!('remainingSeconds' in data) || data.remainingSeconds is int) &&
+             isValidTimestamp(data.createdAt);
+    }
+
+    // Validation for ExamResult
+    function isValidExamResult(data) {
+      return data.id is string && data.id.size() > 0 &&
+             data.testId is string && data.testId.size() > 0 &&
+             data.studentUid is string && data.studentUid == request.auth.uid &&
+             data.totalQuestions is int && data.totalQuestions >= 0 &&
+             (data.totalMarks is int || data.totalMarks is float) &&
+             isValidTimestamp(data.createdAt);
+    }
+
+    // Validation for LeaderboardEntry
+    function isValidLeaderboardEntry(data) {
+      return data.testId is string && data.testId.size() > 0 &&
+             data.studentUid is string &&
+             data.studentName is string && data.studentName.size() > 0 &&
+             (data.score is int || data.score is float) &&
+             data.timeTakenSeconds is int &&
+             isValidTimestamp(data.updatedAt);
+    }
+
+    // User Profiles
+    match /users/{userId} {
+      allow get: if isSignedIn() && (request.auth.uid == userId || isTeacherAdmin());
+      allow list: if isTeacherAdmin();
+      allow create: if isSignedIn() && request.auth.uid == userId &&
+                      (request.resource.data.role == 'student' || isTeacherAdmin()) &&
+                      isValidUserProfile(request.resource.data);
+      allow update: if isSignedIn() && request.auth.uid == userId &&
+                      (request.resource.data.role == resource.data.role || isTeacherAdmin()) &&
+                      isValidUserProfile(request.resource.data);
+      allow delete: if isTeacherAdmin();
+    }
+
+    // Tests collection
+    match /tests/{testId} {
+      allow get: if isSignedIn() && (resource.data.isPublished == true || isTeacherAdmin());
+      allow list: if isSignedIn();
+      allow create, update: if isTeacherAdmin() && isValidExamTest(request.resource.data);
+      allow delete: if isTeacherAdmin();
+
+      // Subcollection: Questions
+      match /questions/{questionId} {
+        allow get, list: if isSignedIn();
+        allow create, update: if isTeacherAdmin() && isValidExamQuestion(request.resource.data);
+        allow delete: if isTeacherAdmin();
+      }
+
+      // Subcollection: Answer Keys
+      match /answerKeys/{keyId} {
+        allow get, list: if isTeacherAdmin() || isSignedIn();
+        allow create, update, delete: if isTeacherAdmin();
+      }
+    }
+
+    // Attempts collection
+    match /attempts/{attemptId} {
+      allow get: if isSignedIn() && (resource == null || resource.data.studentUid == request.auth.uid || isTeacherAdmin());
+      allow list: if isSignedIn() && (resource.data.studentUid == request.auth.uid || isTeacherAdmin());
+      allow create: if isSignedIn() &&
+                      request.resource.data.studentUid == request.auth.uid &&
+                      isValidExamAttempt(request.resource.data);
+      allow update: if isSignedIn() &&
+                      resource.data.studentUid == request.auth.uid &&
+                      request.resource.data.studentUid == request.auth.uid &&
+                      isValidExamAttempt(request.resource.data);
+      allow delete: if isTeacherAdmin();
+    }
+
+    // Results collection
+    match /results/{resultId} {
+      allow get: if isSignedIn() && (resource == null || resource.data.studentUid == request.auth.uid || isTeacherAdmin());
+      allow list: if isSignedIn() && (resource.data.studentUid == request.auth.uid || isTeacherAdmin());
+      allow create: if isSignedIn() &&
+                      request.resource.data.studentUid == request.auth.uid &&
+                      isValidExamResult(request.resource.data);
+      allow update, delete: if isTeacherAdmin();
+    }
+
+    // Leaderboards collection
+    match /leaderboards/{testId}/entries/{studentUid} {
+      allow get, list: if isSignedIn();
+      allow create, update: if isSignedIn() &&
+                              (request.auth.uid == studentUid || isTeacherAdmin()) &&
+                              isValidLeaderboardEntry(request.resource.data);
+      allow delete: if isTeacherAdmin();
+    }
+  }
+}

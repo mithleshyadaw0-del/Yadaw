@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maths By Mithlesh Sir - Android App Download</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;600;700&family=Poppins:wght@500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1E3A8A;
+            --primary-dark: #0F172A;
+            --accent: #F59E0B;
+            --emerald: #10B981;
+            --emerald-dark: #059669;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Hind', sans-serif;
+            background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 50%, #030712 100%);
+            color: #F8FAFC;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 480px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 28px;
+            padding: 32px 24px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .photo-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 16px;
+        }
+        .photo-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #FDE047;
+            box-shadow: 0 0 25px rgba(253, 224, 71, 0.4);
+        }
+        .badge {
+            display: inline-block;
+            background: rgba(253, 224, 71, 0.2);
+            color: #FDE047;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(253, 224, 71, 0.4);
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: #FFFFFF;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            line-height: 1.2;
+        }
+        .subtitle {
+            font-size: 15px;
+            color: #E2E8F0;
+            margin-bottom: 24px;
+        }
+        .meta-box {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            padding: 14px;
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .meta-item {
+            text-align: center;
+        }
+        .meta-val {
+            font-size: 16px;
+            font-weight: 700;
+            color: #38BDF8;
+        }
+        .meta-lbl {
+            font-size: 12px;
+            color: #94A3B8;
+        }
+        .btn-download {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: #FFFFFF;
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            padding: 16px 24px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.5);
+            transition: all 0.2s ease;
+            margin-bottom: 16px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.6);
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        }
+        .btn-download:active {
+            transform: translateY(1px);
+        }
+        .btn-alt {
+            display: block;
+            color: #38BDF8;
+            font-size: 14px;
+            text-decoration: underline;
+            margin-bottom: 24px;
+        }
+        .instructions {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .instructions h3 {
+            font-size: 14px;
+            color: #FDE047;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .instructions ol {
+            padding-left: 20px;
+            font-size: 13px;
+            color: #CBD5E1;
+            line-height: 1.6;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #64748B;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="photo-wrapper">
+            <img src="/mithlesh_sir.jpg" alt="Mithlesh Sir" class="photo-img" onerror="this.src='/assets/aistudio/Screenshot_20250909_224225_Video_Player_088e7c3b.jpg'">
+        </div>
+
+        <div class="badge">★ ऑफिशियल ऑनलाइन CBT ऐप ★</div>
+        <h1>MATHS BY MITHLESH SIR</h1>
+        <p class="subtitle">नवोदय • सैनिक स्कूल • सिमुलतला • ओलंपियाड • रेलवे • SSC</p>
+
+        <div class="meta-box">
+            <div class="meta-item">
+                <div class="meta-val">v1.0.0</div>
+                <div class="meta-lbl">संस्करण (Version)</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-val">29.6 MB</div>
+                <div class="meta-lbl">साइज़ (Size)</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-val">Android 8+</div>
+                <div class="meta-lbl">सपोर्ट (OS)</div>
+            </div>
+        </div>
+
+        <!-- Direct Download Button -->
+        <a href="/Maths_By_Mithlesh_Sir.apk" download="Maths_By_Mithlesh_Sir.apk" class="btn-download" id="downloadBtn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>APK डाउनलोड करें (Direct Download)</span>
+        </a>
+
+        <a href="/Maths_By_Mithlesh_Sir.apk" class="btn-alt">डाउनलोड शुरू नहीं हुआ? यहाँ क्लिक करें</a>
+
+        <div class="instructions">
+            <h3>📱 मोबाइल में कैसे इनस्टॉल करें:</h3>
+            <ol>
+                <li>ऊपर दिए गए हरे बटन <b>"APK डाउनलोड करें"</b> पर टैप करें।</li>
+                <li>यदि फोन में <i>"File might be harmful"</i> दिखे, तो <b>"Download anyway"</b> चुनें।</li>
+                <li>डाउनलोड पूरा होने पर नोटिफिकेशन से APK खोलें और <b>Install</b> करें।</li>
+            </ol>
+        </div>
+
+        <div class="footer">
+            &copy; 2026 Maths By Mithlesh Sir | All Rights Reserved
+        </div>
+    </div>
+
+    <script>
+        // Check if ?auto=true or ?download=1 is in URL, auto trigger download
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('auto') === 'true' || urlParams.get('download') === '1') {
+            window.location.href = '/Maths_By_Mithlesh_Sir.apk';
+        }
+    </script>
+</body>
+</html>
